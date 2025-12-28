@@ -1,0 +1,12 @@
+[
+  {
+    "id": "main-001",
+    "name": "Main Wallet",
+    "balance": 450000.00
+  },
+  {
+    "id": "save-002",
+    "name": "Savings Goal",
+    "balance": 125000.50
+  }
+]

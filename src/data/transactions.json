@@ -1,0 +1,29 @@
+[
+  {
+    "id": "tx-1",
+    "date": "2025-12-27T10:00:00Z",
+    "merchant": "MTN Airtime",
+    "category": "Utilities",
+    "amount": 5000,
+    "type": "debit",
+    "runningBalance": 445000
+  },
+  {
+    "id": "tx-2",
+    "date": "2025-12-26T15:30:00Z",
+    "merchant": "Shoprite Lekki",
+    "category": "Food",
+    "amount": 25000,
+    "type": "debit",
+    "runningBalance": 470000
+  },
+  {
+    "id": "tx-3",
+    "date": "2025-12-25T09:00:00Z",
+    "merchant": "Salary Deposit",
+    "category": "Salary",
+    "amount": 500000,
+    "type": "credit",
+    "runningBalance": 500000
+  }
+]
