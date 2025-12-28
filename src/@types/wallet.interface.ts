@@ -1,0 +1,45 @@
+/**
+ * src/@types/wallet.ts
+ */
+
+export type TransactionCategory = 
+  | 'Food' 
+  | 'Transport' 
+  | 'Shopping' 
+  | 'Utilities' 
+  | 'Transfer' 
+  | 'Salary' 
+  | 'Entertainment' 
+  | 'Miscellaneous';
+
+export type TransactionType = 'credit' | 'debit';
+
+export interface Transaction {
+  id: string;
+  date: string; // ISO 8601 format
+  merchant: string;
+  category: TransactionCategory;
+  amount: number;
+  type: TransactionType;
+  runningBalance: number;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  balance: number;
+}
+
+export interface WalletState {
+  accounts: Account[];
+  transactions: Transaction[];
+  loading: boolean;
+  error: string | null;
+}
+
+// Action Types for our Reducer
+export type WalletAction =
+  | { type: 'SET_INITIAL_DATA'; payload: { accounts: Account[]; transactions: Transaction[] } }
+  | { type: 'TRANSFER_START'; payload: { fromId: string; toId: string; amount: number; tx: Transaction } }
+  | { type: 'TRANSFER_ERROR'; payload: string }
+  | { type: 'TRANSFER_REVERT'; payload: { fromId: string; toId: string; amount: number; txId: string } };
