@@ -42,6 +42,20 @@ export const walletReducer = (
     default:
       return state;
 
+      case 'TRANSFER_START': {
+  const { fromId, toId, amount, tx } = action.payload;
+  
+  return {
+    ...state,
+    accounts: state.accounts.map(acc => {
+      if (acc.id === fromId) return { ...acc, balance: acc.balance - amount };
+      if (acc.id === toId) return { ...acc, balance: acc.balance + amount };
+      return acc;
+    }),
+    transactions: [tx, ...state.transactions], // Prepend the new transaction
+  };
+}
+
   case 'TOGGLE_HIDE_BALANCE': {
   const newState = {
     ...state,
