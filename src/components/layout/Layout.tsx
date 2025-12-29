@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import Sidebar from './sidebar';
 
 interface LayoutProps {
@@ -6,10 +6,12 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar remains fixed on the left */}
-      <Sidebar />
+      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       
       {/* Main content shifted by 64px (the width of our sidebar) */}
       <main className="ml-64 min-h-screen transition-all duration-300">
