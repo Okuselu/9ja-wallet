@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { WalletProvider } from './context/WalletContext/Wallet.context';
+import Layout from './components/layout/Layout';
 
 // Temporary placeholder components until we build the real ones
 const Dashboard = () => <div className="p-8"><h1>Dashboard Coming Soon</h1></div>;
@@ -10,6 +11,7 @@ function App(): ReactElement {
   return (
     <WalletProvider>
       <Router>
+        <Layout>
         <div className="min-h-screen bg-slate-50 text-slate-900">
           {/* Navbar will go here */}
           <Routes>
@@ -17,6 +19,7 @@ function App(): ReactElement {
             <Route path="/transfer" element={<Transfer />} />
           </Routes>
         </div>
+        </Layout>
       </Router>
     </WalletProvider>
   );
