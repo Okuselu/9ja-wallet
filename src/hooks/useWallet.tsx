@@ -2,7 +2,8 @@ import { createContext, useContext } from 'react';
 import type { WalletState } from '../@types/wallet.interface'; 
 
 export interface WalletContextType extends WalletState {
-  transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
+transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
+  toggleHideBalance: () => void;
 }
 
 export const WalletContext = createContext<WalletContextType | undefined>(undefined);

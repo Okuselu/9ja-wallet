@@ -41,6 +41,15 @@ export const walletReducer = (
 
     default:
       return state;
+
+      case 'TOGGLE_HIDE_BALANCE':
+  return {
+    ...state,
+    preferences: {
+      ...state.preferences,
+      hideBalance: !state.preferences.hideBalance
+    }
+  };
   }
 };
 

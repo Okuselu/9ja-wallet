@@ -4,16 +4,20 @@ import type {
   Account,
   Transaction,
 } from "../../@types/wallet.interface";
-import { walletReducer } from "./Wallet.reducer"; // Fixed path
-import { WalletContext } from "../../hooks/useWallet"; // Import from new home
+import { walletReducer } from "./Wallet.reducer";
+import { WalletContext } from "../../hooks/useWallet";
 import accountsData from "../../data/accounts.json";
 import transactionsData from "../../data/transactions.json";
 
+// FIX: Added preferences to the initialState to satisfy the WalletState interface
 const initialState: WalletState = {
   accounts: [],
   transactions: [],
   loading: true,
   error: null,
+  preferences: {
+    hideBalance: false, // Default state
+  },
 };
 
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -22,6 +26,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, dispatch] = useReducer(walletReducer, initialState);
 
   useEffect(() => {
+    // Simulate initial data fetch
     dispatch({
       type: "SET_INITIAL_DATA",
       payload: {
@@ -43,34 +48,29 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
       throw new Error("Insufficient funds");
     }
 
-    // Create the transaction object for the list
     const newTx: Transaction = {
       id: `tx-${Date.now()}`,
       date: new Date().toISOString(),
-      merchant: `Transfer: ${fromAccount.name} → ${toAccount?.name}`,
+      merchant: `Transfer: ${fromAccount.name} → ${toAccount?.name || 'External'}`,
       category: "Transfer",
       amount,
-      type: "debit", // It's a debit from the perspective of the sender
+      type: "debit",
       runningBalance: fromAccount.balance - amount,
     };
 
-    // 1. Trigger Optimistic Update
     dispatch({
       type: "TRANSFER_START",
       payload: { fromId, toId, amount, tx: newTx },
     });
 
     try {
-      // 2. Simulate Network Request
       await new Promise((resolve, reject) => {
-        // 5% chance of failure to test our Revert logic
         setTimeout(
           () => (Math.random() > 0.05 ? resolve(true) : reject()),
           1200
         );
       });
     } catch {
-      // 3. Rollback on Error
       dispatch({
         type: "TRANSFER_REVERT",
         payload: { fromId, toId, amount, txId: newTx.id },
@@ -79,13 +79,23 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
         type: "TRANSFER_ERROR",
         payload: "Transaction failed. Balance has been restored.",
       });
-      // Re-throw so the UI component can show a toast/alert
       throw new Error("Transaction failed");
     }
   };
 
+  // Function to toggle the privacy setting
+  const toggleHideBalance = () => {
+    dispatch({ type: 'TOGGLE_HIDE_BALANCE' });
+  };
+
   return (
-    <WalletContext.Provider value={{ ...state, transferMoney }}>
+    <WalletContext.Provider 
+      value={{ 
+        ...state, 
+        transferMoney, 
+        toggleHideBalance 
+      }}
+    >
       {children}
     </WalletContext.Provider>
   );
