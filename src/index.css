@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #020817;
+  --color-card: #ffffff;
+  --color-card-foreground: #020817;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+}
+
+body {
+  @apply bg-white text-slate-950 antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
+}
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
