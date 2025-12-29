@@ -1,143 +1,82 @@
-9jaWallet 
-A high-performance, modern FinTech digital wallet dashboard built with React, TypeScript, and Tailwind CSS v4. This project implements advanced state management patterns to simulate a real-world financial experience.
+9ja-Wallet Mini Dashboard 🇳🇬
+A high-fidelity, responsive fintech dashboard built with React, TypeScript, and Tailwind CSS. This project demonstrates a secure, "privacy-first" approach to digital banking interfaces.
 
-🚀 Key Features
-Optimistic UI Transfers: Immediate UI updates on fund transfers with automatic rollback mechanisms on failure.
+🚀 Core Functionalities
+1. Unified State Management
+Utilizes the React Context API with a useReducer pattern to create a centralized "Source of Truth" for account balances and transaction history.
 
-Real-time Balance Management: Multi-account support (Main vs. Savings) using centralized state.
+Persistence: Integrates with localStorage to ensure user preferences (Theme, Privacy Mode) and account states persist across sessions.
 
-Advanced Transaction Filtering: High-performance client-side searching and category filtering.
+2. Smart Transfers (Optimistic UI)
+Supports bidirectional funds movement between "Main Wallet" and "Savings Goal."
 
-Modern Aesthetic: Built with a shadcn/ui and Tailark inspired design language.
+Validation: Implements strict financial logic, including:
 
-Strict Type Safety: Comprehensive TypeScript interfaces for financial data structures.
+Insufficient funds check.
 
-🛠️ Tech Stack
-Framework: React 18 (Vite)
+Positive decimal validation.
 
-State Management: useReducer + Context API (Decoupled logic for testability)
+Maximum 2 decimal place precision (to prevent floating-point errors).
 
-Styling: Tailwind CSS v4 + lucide-react for iconography
+Instant Feedback: Employs an optimistic update strategy where the UI reflects the new balance immediately while simulating a 1.2s network request.
 
-Routing: React Router 7
+3. Privacy & Security Hygiene
+Privacy Mode: A global toggle that masks balances and transaction amounts (e.g., ₦450,000.00 → ••••••) across all components.
 
-Package Manager: pnpm
+Safe Logging: Ensures no sensitive transaction objects are leaked in production console logs.
 
-🏗️ Architecture & Patterns
-1. The Reducer Pattern
-We utilize a decoupled WalletReducer to handle state transitions. This ensures that business logic for financial calculations remains pure and easily testable outside of the React component lifecycle.
+Sanitized Errors: User-facing error messages are handled gracefully without exposing internal stack traces.
 
-2. Optimistic Updates
-To ensure a "zero-latency" feel, the app predicts the success of transactions. If the simulated API call fails, the state is automatically reverted to the last known "good" state using a TRANSFER_REVERT action.
+4. Dynamic Transaction History
+Real-time search by merchant name.
 
-3. Folder Structure
-Plaintext
+Categorical filtering (Food, Utilities, Salary, etc.) using optimized useMemo hooks for zero-latency UI updates.
 
-src/
-├── @types/         # Strict naming: *.interface.ts
-├── components/     # UI Atoms & Layout wrappers
-├── context/        # State Providers & Reducers
-├── data/           # Mock JSON data seeding
-├── hooks/          # Custom hooks (e.g., useWallet)
-└── utils/          # Formatting and Tailwind merging (cn utility)
-🚦 Getting Started
-Prerequisites
-Node.js 18+
+🛠 Tech Stack
+Framework: React 18 (Vite-powered)
 
-pnpm 10+
+Language: TypeScript (Strict Mode)
 
-Installation
-Clone the repository
+Styling: Tailwind CSS
+
+Icons: Lucide React
+
+Animations: Tailwind Animate
+
+📐 Architectural Decisions
+Why Context API over Redux?
+For a "Mini Wallet" scope, Redux would introduce unnecessary boilerplate. Context API provides excellent performance for this level of state nesting while keeping the bundle size small and the codebase maintainable.
+
+Why useReducer?
+Financial transactions involve complex state transitions (decrementing one account while incrementing another). useReducer ensures these transitions are atomic, preventing "ghost money" bugs where one account updates but the other fails.
+
+Component Design
+I followed the Atomic Design principle, separating "Dumb" UI components (BalanceCards, TransactionRows) from "Smart" Container components (TransferForm, Dashboard).
+
+🏃‍♂️ Getting Started
+Clone the repo:
 
 Bash
 
-git clone https://github.com/your-username/9ja-wallet.git
-cd 9ja-wallet
-Install dependencies
+git clone https://github.com/Okuselu/9ja-wallet.git
+Install dependencies:
 
 Bash
 
 pnpm install
-Run development server
+Run Development Server:
 
 Bash
 
 pnpm dev
-📝 Developer Notes
-This project follows Conventional Commits and a strict branching strategy (main -> development -> feature/). All UI components are built to be modular and responsive.
+Build for Production:
 
+Bash
 
+pnpm build
+💡 Future Roadmap
+Graphs: Integration of Chart.js to visualize monthly spending trends.
 
-<!-- # React + TypeScript + Vite
+Zod Validation: Move from manual form validation to schema-based validation.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-``` -->
+Unit Testing: Implement Vitest for the reducer logic to ensure 100% accuracy in financial calculations.
