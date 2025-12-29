@@ -6,6 +6,18 @@ export interface WalletContextType extends WalletState {
   transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
 }
 
+export interface UserPreferences {
+  hideBalance: boolean;
+}
+
+export interface WalletState {
+  accounts: Account[];
+  transactions: Transaction[];
+  loading: boolean;
+  error: string | null;
+  preferences: UserPreferences; // Add this
+}
+
 export type TransactionCategory = 
   | 'Food' 
   | 'Transport' 
@@ -46,4 +58,6 @@ export type WalletAction =
   | { type: 'SET_INITIAL_DATA'; payload: { accounts: Account[]; transactions: Transaction[] } }
   | { type: 'TRANSFER_START'; payload: { fromId: string; toId: string; amount: number; tx: Transaction } }
   | { type: 'TRANSFER_ERROR'; payload: string }
-  | { type: 'TRANSFER_REVERT'; payload: { fromId: string; toId: string; amount: number; txId: string } };
+  | { type: 'TRANSFER_REVERT'; payload: { fromId: string; toId: string; amount: number; txId: string } }
+  | { type: 'TOGGLE_HIDE_BALANCE' };
+  

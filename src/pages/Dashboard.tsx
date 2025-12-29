@@ -3,15 +3,13 @@ import TransactionList from '../components/wallet/TransactionList';
 import BalanceCard from '../components/wallet/BalanceCard';
 
 export default function Dashboard() {
-  const { accounts, loading } = useWallet();
+  // Combine destructuring for cleaner code
+  const { accounts, loading, preferences } = useWallet();
 
   if (loading) return <div className="p-8 animate-pulse text-muted-foreground">Loading Wallet...</div>;
 
   return (
-    <div className="w-full space-y-12">
-      {/* KEEP: The Balance Cards here as the primary dashboard content.
-         REMOVE: Any "Welcome" or extra "Accounts" headers that are now in Header.tsx 
-      */}
+    <div className="w-full space-y-12 animate-in fade-in duration-700">
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {accounts.map((acc) => (
@@ -20,6 +18,8 @@ export default function Dashboard() {
               name={acc.name}
               balance={acc.balance}
               type={acc.id.includes('savings') ? 'savings' : 'main'}
+              // Pass the preference down
+              isHidden={preferences.hideBalance}
             />
           ))}
         </div>

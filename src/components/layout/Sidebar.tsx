@@ -44,14 +44,27 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
 
         <div className="flex h-full flex-col justify-between px-3 py-6">
           <div>
-            <div className={cn("mb-10 flex items-center px-2", isCollapsed ? "justify-center" : "gap-3")}>
-              <CreditCard size={28} stroke="url(#brand-gradient)" strokeWidth={2.5} className="shrink-0" />
+            {/* Logo Section */}
+            <div className={cn(
+            "mb-10 flex items-center px-2 transition-all duration-300", 
+            isCollapsed ? "justify-center" : "gap-3"
+             )}>
+            {/* The Icon Container with Gradient Background */}
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8C00] shadow-lg shadow-orange-500/20">
+             <CreditCard size={22} className="text-white" />
+             </div>
+
               {!isCollapsed && (
-                <span className="text-xl font-bold tracking-tight text-foreground animate-in fade-in slide-in-from-left-2">
-                  9jaWallet
-                </span>
-              )}
-            </div>
+            <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-500">
+            <span className="text-lg font-bold leading-none tracking-tight text-foreground">
+             9ja<span className="text-[#FF4D00]">Wallet</span>
+            </span>
+           <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest mt-1">
+        Personal
+      </span>
+    </div>
+  )}
+</div>
 
             <nav className="space-y-1.5">
               {[
