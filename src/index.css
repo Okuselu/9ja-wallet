@@ -4,82 +4,54 @@
   --color-background: #ffffff;
   --color-foreground: #020817;
   --color-card: #ffffff;
-  --color-card-foreground: #020817;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
+  --color-card-border: #e2e8f0;
+  --color-muted: #f8fafc;
+  
+  --transition-theme: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-body {
-  @apply bg-white text-slate-950 antialiased;
-  font-family: 'Inter', system-ui, sans-serif;
-}
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.dark {
+  --color-background: #020817; /* Deep Navy/Black */
+  --color-foreground: #f8fafc;
+  --color-card: #0f172a;       /* Slightly lighter Navy */
+  --color-card-border: #1e293b;
+  --color-muted: #1e293b;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Custom Brand Gradient for Icons */
+.brand-gradient-text {
+  background: linear-gradient(135deg, #FF4D00 0%, #FF8C00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.wave {
+  display: inline-block;
+  animation: wave 2.5s infinite;
+  transform-origin: 70% 70%;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+/* For SVG strokes specifically */
+.svg-brand-gradient stop:first-child { stop-color: #FF4D00; }
+.svg-brand-gradient stop:last-child { stop-color: #FF8C00; }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* This is the critical part for App-Wide dark mode */
+@layer base {
+  html {
+    @apply antialiased transition-[var(--transition-theme)];
   }
-  a:hover {
-    color: #747bff;
+  
+  body {
+    @apply bg-background text-foreground min-h-screen transition-[var(--transition-theme)];
   }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
+}

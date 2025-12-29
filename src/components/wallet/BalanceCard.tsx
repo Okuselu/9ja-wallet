@@ -6,51 +6,111 @@ interface BalanceCardProps {
   name: string;
   balance: number;
   type: 'main' | 'savings';
-  className?: string; // Standard shadcn pattern: allow external classes
 }
 
-export default function BalanceCard({ 
-  name, 
-  balance, 
-  type, 
-  className 
-}: BalanceCardProps): ReactElement {
+export default function BalanceCard({ name, balance, type }: BalanceCardProps): ReactElement {
   const isMain = type === 'main';
 
   return (
-    // Now using cn to merge default styles with the 'type' logic and external props
     <div className={cn(
-      "rounded-xl border p-6 shadow-sm transition-all hover:shadow-md",
-      isMain ? "bg-white border-slate-200" : "bg-slate-50/50 border-dashed border-slate-300",
-      className
+      "relative overflow-hidden rounded-2xl border p-6 transition-all duration-300",
+      "bg-card border-card-border hover:border-orange-500/30 hover:shadow-sm"
     )}>
-      <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-          {name}
-        </p>
-        {isMain ? (
-          <Wallet className="h-4 w-4 text-slate-400" />
-        ) : (
-          <PiggyBank className="h-4 w-4 text-slate-400" />
-        )}
-      </div>
-      <div className="mt-2">
-        <div className="text-2xl font-bold tracking-tight text-slate-900">
-          ₦{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+      {/* Invisible SVG Definition for the gradient stroke */}
+      <svg width="0" height="0" className="absolute">
+        <linearGradient id="brand-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FF4D00" />
+          <stop offset="100%" stopColor="#FF8C00" />
+        </linearGradient>
+      </svg>
+
+      <div className="flex items-center justify-between mb-8">
+        {/* Minimalist Icon: No background, just the gradient stroke */}
+        <div className="flex h-6 w-6 items-center justify-center">
+          {isMain ? (
+            <Wallet size={24} stroke="url(#brand-gradient)" strokeWidth={1.5} />
+          ) : (
+            <PiggyBank size={24} stroke="url(#brand-gradient)" strokeWidth={1.5} />
+          )}
         </div>
-        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-          <span className={cn(
-            "flex items-center font-medium",
-            isMain ? "text-emerald-600" : "text-blue-600"
-          )}>
-            <ArrowUpRight className="h-3 w-3" /> {isMain ? '+2.5%' : 'Target: 80%'}
+        
+        <div className="px-2 py-1 rounded-md bg-muted/50">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+            {isMain ? "Main Account" : "Savings"}
           </span>
-          {isMain ? 'since last month' : 'of goal reached'}
-        </p>
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <h3 className="text-sm font-medium text-muted-foreground/60">{name}</h3>
+        <div className="text-3xl font-bold tracking-tight text-foreground flex items-baseline gap-1">
+          <span className="text-lg font-normal text-muted-foreground/40">₦</span>
+          {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center gap-2">
+        <div className="flex items-center text-emerald-500 font-medium text-xs">
+          <ArrowUpRight size={14} className="mr-0.5" />
+          2.5%
+        </div>
+        <span className="text-[11px] text-muted-foreground/50 italic">vs last month</span>
       </div>
     </div>
   );
 }
+
+// import type { ReactElement } from 'react';
+// import { Wallet, PiggyBank, ArrowUpRight } from 'lucide-react';
+// import { cn } from '../../utils/cn';
+
+// interface BalanceCardProps {
+//   name: string;
+//   balance: number;
+//   type: 'main' | 'savings';
+//   className?: string; // Standard shadcn pattern: allow external classes
+// }
+
+// export default function BalanceCard({ 
+//   name, 
+//   balance, 
+//   type
+// }: BalanceCardProps): ReactElement {
+//   const isMain = type === 'main';
+
+//   return (
+//     // Now using cn to merge default styles with the 'type' logic and external props
+//     <div className={cn(
+//       "rounded-xl border p-6 shadow-sm transition-all hover:shadow-md", "bg-card border-card-border)",
+//       isMain && "bg-muted/50 border-dashed"
+//     )}>
+//       <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+//         <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
+//           {name}
+//         </p>
+//         {isMain ? (
+//           <Wallet className="h-4 w-4 text-slate-400" />
+//         ) : (
+//           <PiggyBank className="h-4 w-4 text-slate-400" />
+//         )}
+//       </div>
+//       <div className="mt-2">
+//         <div className="text-2xl font-bold tracking-tight text-foreground"> {/* Changed text-slate-900 */}
+//     ₦{balance.toLocaleString()}
+//   </div>
+//         <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+//           <span className={cn(
+//             "flex items-center font-medium",
+//             isMain ? "text-emerald-600" : "text-blue-600"
+//           )}>
+//             <ArrowUpRight className="h-3 w-3" /> {isMain ? '+2.5%' : 'Target: 80%'}
+//           </span>
+//           {isMain ? 'since last month' : 'of goal reached'}
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
 
 
 // import type { ReactElement } from 'react';
