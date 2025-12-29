@@ -1,26 +1,24 @@
-import type { ReactElement } from 'react'
-import { useState } from 'react'
+import type { ReactElement } from 'react';
 import { Wallet, PiggyBank, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { useWallet } from '../../hooks/useWallet';
 
 interface BalanceCardProps {
   name: string;
   balance: number;
   type: 'main' | 'savings';
-  isHidden?: boolean; // Added preference prop
+  isHidden?: boolean;
 }
 
 export default function BalanceCard({ 
   name, 
   balance, 
   type, 
-  isHidden = false // Default to false if not provided
+  isHidden = false 
 }: BalanceCardProps): ReactElement {
-  const [isPeeking, setIsPeeking] = useState(false); // Local state for temporary reveal
   const isMain = type === 'main';
-
-  // Define logic to show balance if either globally visible OR locally "peeking"
-  const shouldShowBalance = !isHidden || isPeeking;
+  
+  const { toggleHideBalance } = useWallet();
 
   return (
     <div className={cn(
@@ -48,16 +46,16 @@ export default function BalanceCard({
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Interactive Privacy Toggle (Fixes Eye/EyeOff ESLint error) */}
-          {isHidden && (
-            <button 
-              onClick={() => setIsPeeking(!isPeeking)}
-              className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground/40 transition-colors"
-              title={isPeeking ? "Hide balance" : "Reveal balance"}
-            >
-              {isPeeking ? <Eye size={14} /> : <EyeOff size={14} />}
-            </button>
-          )}
+          {/* Interactive Privacy Toggle: 
+            Always visible now. Directly triggers the global state.
+          */}
+          <button 
+            onClick={() => toggleHideBalance()}
+            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground/40 transition-colors"
+            title={isHidden ? "Show balance" : "Hide balance"}
+          >
+            {isHidden ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
           
           <div className="px-2 py-1 rounded-md bg-muted/50 border border-card-border/50">
             <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
@@ -73,14 +71,14 @@ export default function BalanceCard({
         <div className="text-3xl font-bold tracking-tight text-foreground flex items-baseline gap-1 min-h-[40px]">
           <span className="text-lg font-normal text-muted-foreground/40">₦</span>
           
-          {/* Conditional Logic for Masking with smooth transition */}
+          {/* UI reflects the global isHidden state passed from Dashboard */}
           <div className="flex-1 animate-in fade-in duration-300">
-            {shouldShowBalance ? (
-              <span>{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-            ) : (
+            {isHidden ? (
               <span className="tracking-[0.2em] font-mono text-muted-foreground/40 select-none pt-1">
                 ••••••
               </span>
+            ) : (
+              <span>{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             )}
           </div>
         </div>
@@ -98,94 +96,3 @@ export default function BalanceCard({
     </div>
   );
 }
-// import type { ReactElement } from 'react';
-// import { Wallet, PiggyBank, ArrowUpRight } from 'lucide-react';
-// import { cn } from '../../utils/cn';
-
-// interface BalanceCardProps {
-//   name: string;
-//   balance: number;
-//   type: 'main' | 'savings';
-//   className?: string; // Standard shadcn pattern: allow external classes
-// }
-
-// export default function BalanceCard({ 
-//   name, 
-//   balance, 
-//   type
-// }: BalanceCardProps): ReactElement {
-//   const isMain = type === 'main';
-
-//   return (
-//     // Now using cn to merge default styles with the 'type' logic and external props
-//     <div className={cn(
-//       "rounded-xl border p-6 shadow-sm transition-all hover:shadow-md", "bg-card border-card-border)",
-//       isMain && "bg-muted/50 border-dashed"
-//     )}>
-//       <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-//         <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-//           {name}
-//         </p>
-//         {isMain ? (
-//           <Wallet className="h-4 w-4 text-slate-400" />
-//         ) : (
-//           <PiggyBank className="h-4 w-4 text-slate-400" />
-//         )}
-//       </div>
-//       <div className="mt-2">
-//         <div className="text-2xl font-bold tracking-tight text-foreground"> {/* Changed text-slate-900 */}
-//     ₦{balance.toLocaleString()}
-//   </div>
-//         <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-//           <span className={cn(
-//             "flex items-center font-medium",
-//             isMain ? "text-emerald-600" : "text-blue-600"
-//           )}>
-//             <ArrowUpRight className="h-3 w-3" /> {isMain ? '+2.5%' : 'Target: 80%'}
-//           </span>
-//           {isMain ? 'since last month' : 'of goal reached'}
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-// import type { ReactElement } from 'react';
-// import { ArrowUpRight, Wallet } from 'lucide-react';
-
-// interface BalanceCardProps {
-//   name: string;
-//   balance: number;
-//   type: 'main' | 'savings';
-// }
-
-// export default function BalanceCard({ name, balance, type }: BalanceCardProps): ReactElement {
-//   const isMain = type === 'main';
-
-//   return (
-//     <div className="rounded-xl border border-slate-200 bg-card p-6 shadow-sm hover:shadow-md transition-shadow">
-//       <div className="flex items-center justify-between space-y-0 pb-2">
-//         <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-//           {name}
-//         </p>
-//         <Wallet className="h-4 w-4 text-slate-400" />
-//       </div>
-//       <div className="flex items-baseline space-x-2 mt-2">
-//         <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-//           ₦{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-//         </h2>
-//       </div>
-//       <div className="mt-4 flex items-center text-xs font-medium">
-//         {isMain ? (
-//           <span className="flex items-center text-emerald-600">
-//             <ArrowUpRight className="mr-1 h-3 w-3" />
-//             +2.5% from last month
-//           </span>
-//         ) : (
-//           <span className="text-slate-400">Target: ₦1.5M</span>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }

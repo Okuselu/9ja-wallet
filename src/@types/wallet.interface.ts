@@ -60,3 +60,4 @@ export type WalletAction =
   | { type: 'TRANSFER_ERROR'; payload: string }
   | { type: 'TRANSFER_REVERT'; payload: { fromId: string; toId: string; amount: number; txId: string } }
   | { type: 'TOGGLE_HIDE_BALANCE' };
+  
