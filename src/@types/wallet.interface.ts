@@ -1,6 +1,10 @@
 /**
  * src/@types/wallet.ts
+
  */
+export interface WalletContextType extends WalletState {
+  transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
+}
 
 export type TransactionCategory = 
   | 'Food' 
