@@ -13,7 +13,7 @@ export default function Settings() {
         { 
           icon: User, 
           label: "Personal Information", 
-          desc: "Tunde Okuselu, tunde@example.com", 
+          desc: "Madeenat Cole, madenat@cole.com", 
           action: <ChevronRight size={18} className="text-muted-foreground/40" /> 
         },
         { 

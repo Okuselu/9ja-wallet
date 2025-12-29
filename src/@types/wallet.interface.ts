@@ -19,24 +19,22 @@ export interface WalletState {
 }
 
 export type TransactionCategory = 
-  | 'Food' 
-  | 'Transport' 
-  | 'Shopping' 
-  | 'Utilities' 
-  | 'Transfer' 
-  | 'Salary' 
-  | 'Entertainment' 
-  | 'Miscellaneous';
+  | "Food" 
+  | "Transport" 
+  | "Utilities" 
+  | "Salary" 
+  | "Transfer" 
+  | "Shopping";
 
 export type TransactionType = 'credit' | 'debit';
 
 export interface Transaction {
   id: string;
-  date: string; // ISO 8601 format
+  date: string;
   merchant: string;
-  category: TransactionCategory;
+  category: TransactionCategory; 
   amount: number;
-  type: TransactionType;
+  type: 'debit' | 'credit';
   runningBalance: number;
 }
 

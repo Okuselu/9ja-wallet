@@ -10,7 +10,7 @@ import accountsData from "../../data/accounts.json";
 import transactionsData from "../../data/transactions.json";
 
 const getInitialPreferences = () => {
-  const saved = localStorage.getItem('9ja-wallet-preferences');
+  const saved = localStorage.getItem("9ja-wallet-preferences");
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -27,7 +27,7 @@ const initialState: WalletState = {
   loading: true,
   error: null,
   preferences: {
-    hideBalance: false, 
+    hideBalance: false,
     ...getInitialPreferences(),
   },
 };
@@ -48,6 +48,22 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, []);
 
+useEffect(() => {
+  const loadData = async () => {
+    // Simulate initial data fetch
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    dispatch({
+      type: "SET_INITIAL_DATA",
+      payload: {
+        accounts: accountsData as Account[],
+        transactions: transactionsData as Transaction[],
+      },
+    });
+  };
+  loadData();
+}, []);
+
   const transferMoney = async (
     fromId: string,
     toId: string,
@@ -63,7 +79,9 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
     const newTx: Transaction = {
       id: `tx-${Date.now()}`,
       date: new Date().toISOString(),
-      merchant: `Transfer: ${fromAccount.name} → ${toAccount?.name || 'External'}`,
+      merchant: `Transfer: ${fromAccount.name} → ${
+        toAccount?.name || "External"
+      }`,
       category: "Transfer",
       amount,
       type: "debit",
@@ -97,19 +115,18 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Function to toggle the privacy setting
   const toggleHideBalance = () => {
-    dispatch({ type: 'TOGGLE_HIDE_BALANCE' });
+    dispatch({ type: "TOGGLE_HIDE_BALANCE" });
   };
 
   return (
-    <WalletContext.Provider 
-      value={{ 
-        ...state, 
-        transferMoney, 
-        toggleHideBalance 
+    <WalletContext.Provider
+      value={{
+        ...state,
+        transferMoney,
+        toggleHideBalance,
       }}
     >
       {children}
     </WalletContext.Provider>
   );
 };
-
