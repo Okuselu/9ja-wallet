@@ -3,7 +3,22 @@
 
  */
 export interface WalletContextType extends WalletState {
-  transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
+  transferMoney: (
+    fromId: string, 
+    toId: string, 
+    amount: number, 
+    metadata?: TransferMetadata 
+  ) => Promise<void>;
+  toggleHideBalance: () => void;
+clearError: () => void;
+}
+
+
+
+export interface TransferMetadata {
+  bankName?: string;
+  accountName?: string;
+  recipientAccount?: string;
 }
 
 export interface UserPreferences {
@@ -18,13 +33,7 @@ export interface WalletState {
   preferences: UserPreferences; // Add this
 }
 
-export type TransactionCategory = 
-  | "Food" 
-  | "Transport" 
-  | "Utilities" 
-  | "Salary" 
-  | "Transfer" 
-  | "Shopping";
+export type TransactionCategory = "Transfer" | "Internal" | "Deposit" | "Payment" | "Savings";
 
 export type TransactionType = 'credit' | 'debit';
 
@@ -32,6 +41,8 @@ export interface Transaction {
   id: string;
   date: string;
   merchant: string;
+  description?: string;
+  title?: string;
   category: TransactionCategory; 
   amount: number;
   type: 'debit' | 'credit';
@@ -51,11 +62,16 @@ export interface WalletState {
   error: string | null;
 }
 
-// Action Types for our Reducer
 export type WalletAction =
-  | { type: 'SET_INITIAL_DATA'; payload: { accounts: Account[]; transactions: Transaction[] } }
-  | { type: 'TRANSFER_START'; payload: { fromId: string; toId: string; amount: number; tx: Transaction } }
-  | { type: 'TRANSFER_ERROR'; payload: string }
-  | { type: 'TRANSFER_REVERT'; payload: { fromId: string; toId: string; amount: number; txId: string } }
-  | { type: 'TOGGLE_HIDE_BALANCE' };
-  
+  | { type: "SET_INITIAL_DATA"; payload: { accounts: Account[]; transactions: Transaction[] } }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "TRANSFER_START"; payload: { fromId: string; toId: string; amount: number; tx: Transaction } }
+  | { type: "TRANSFER_ERROR"; payload: string }
+  | { type: "TRANSFER_REVERT"; payload: { fromId: string; toId: string; amount: number; txId: string } }
+  | { type: "TOGGLE_HIDE_BALANCE" };
+
+export interface WalletContextType extends WalletState {
+  transferMoney: (fromId: string, toId: string, amount: number, metadata?: TransferMetadata) => Promise<void>;
+  toggleHideBalance: () => void;
+  clearError: () => void;
+}

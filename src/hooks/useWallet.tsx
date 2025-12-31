@@ -1,11 +1,8 @@
 import { createContext, useContext } from 'react';
-import type { WalletState } from '../@types/wallet.interface'; 
+// We import the interface, so we MUST NOT declare it again below
+import type { WalletContextType } from '../@types/wallet.interface'; 
 
-export interface WalletContextType extends WalletState {
-transferMoney: (fromId: string, toId: string, amount: number) => Promise<void>;
-  toggleHideBalance: () => void;
-}
-
+// Use the imported type in the generic <...>
 export const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const useWallet = () => {

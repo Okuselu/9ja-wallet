@@ -1,16 +1,14 @@
-import React, { useReducer, useEffect } from "react";
-import type {
-  WalletState,
-  Account,
-  Transaction,
-} from "../../@types/wallet.interface";
+import React, { useReducer, useEffect, useCallback } from "react";
+import type { WalletState, Account, Transaction, TransferMetadata } from "../../@types/wallet.interface";
 import { walletReducer } from "./Wallet.reducer";
 import { WalletContext } from "../../hooks/useWallet";
 import accountsData from "../../data/accounts.json";
 import transactionsData from "../../data/transactions.json";
 
+const PREFERENCES_KEY = "9ja-wallet-preferences";
+
 const getInitialPreferences = () => {
-  const saved = localStorage.getItem("9ja-wallet-preferences");
+  const saved = localStorage.getItem(PREFERENCES_KEY);
   if (saved) {
     try {
       return JSON.parse(saved);
@@ -26,63 +24,62 @@ const initialState: WalletState = {
   transactions: [],
   loading: true,
   error: null,
-  preferences: {
-    hideBalance: false,
-    ...getInitialPreferences(),
-  },
+  preferences: getInitialPreferences(),
 };
 
-export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(walletReducer, initialState);
 
+  // 1. Unified Initial Data Load
   useEffect(() => {
-    // Simulate initial data fetch
-    dispatch({
-      type: "SET_INITIAL_DATA",
-      payload: {
-        accounts: accountsData as Account[],
-        transactions: transactionsData as Transaction[],
-      },
-    });
+    const loadData = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        dispatch({
+          type: "SET_INITIAL_DATA",
+          payload: {
+            accounts: accountsData as Account[],
+            transactions: transactionsData as Transaction[],
+          },
+        });
+      } catch {
+        // Fix: Removed 'err' to satisfy linter
+        dispatch({ type: "SET_ERROR", payload: "Failed to load wallet data" });
+      }
+    };
+    loadData();
   }, []);
 
-useEffect(() => {
-  const loadData = async () => {
-    // Simulate initial data fetch
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    dispatch({
-      type: "SET_INITIAL_DATA",
-      payload: {
-        accounts: accountsData as Account[],
-        transactions: transactionsData as Transaction[],
-      },
-    });
-  };
-  loadData();
-}, []);
+  // 2. Sync Preferences
+  useEffect(() => {
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(state.preferences));
+  }, [state.preferences]);
 
-  const transferMoney = async (
+  // 3. Centralized Transfer Logic
+  const transferMoney = useCallback(async (
     fromId: string,
     toId: string,
-    amount: number
+    amount: number,
+    metadata?: TransferMetadata 
   ) => {
     const fromAccount = state.accounts.find((a) => a.id === fromId);
-    const toAccount = state.accounts.find((a) => a.id === toId);
-
+    
     if (!fromAccount || fromAccount.balance < amount) {
-      throw new Error("Insufficient funds");
+      const errorMsg = "Insufficient funds for this transaction.";
+      dispatch({ type: "TRANSFER_ERROR", payload: errorMsg });
+      throw new Error(errorMsg);
     }
 
+    const isExternal = toId === "external-target";
+    const merchantLabel = isExternal 
+      ? `To: ${metadata?.accountName || 'Unknown'} (${metadata?.bankName || 'External Bank'})`
+      : `Internal Transfer: Main ➔ Savings`;
+
     const newTx: Transaction = {
-      id: `tx-${Date.now()}`,
+      id: `TX-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       date: new Date().toISOString(),
-      merchant: `Transfer: ${fromAccount.name} → ${
-        toAccount?.name || "External"
-      }`,
-      category: "Transfer",
+      merchant: merchantLabel,
+      category: isExternal ? "Transfer" : "Internal", // Must match TransactionCategory
       amount,
       type: "debit",
       runningBalance: fromAccount.balance - amount,
@@ -95,28 +92,26 @@ useEffect(() => {
 
     try {
       await new Promise((resolve, reject) => {
-        setTimeout(
-          () => (Math.random() > 0.05 ? resolve(true) : reject()),
-          1200
-        );
+        setTimeout(() => (Math.random() > 0.05 ? resolve(true) : reject()), 1500);
       });
+      dispatch({ type: "SET_ERROR", payload: null });
     } catch {
+      // Revert with corrected payload types
       dispatch({
         type: "TRANSFER_REVERT",
         payload: { fromId, toId, amount, txId: newTx.id },
       });
-      dispatch({
-        type: "TRANSFER_ERROR",
-        payload: "Transaction failed. Balance has been restored.",
-      });
-      throw new Error("Transaction failed");
+      dispatch({ type: "SET_ERROR", payload: "The bank server is unreachable. Transaction reverted." });
     }
-  };
+  }, [state.accounts]);
 
-  // Function to toggle the privacy setting
-  const toggleHideBalance = () => {
+  const toggleHideBalance = useCallback(() => {
     dispatch({ type: "TOGGLE_HIDE_BALANCE" });
-  };
+  }, []);
+
+  const clearError = useCallback(() => {
+    dispatch({ type: "SET_ERROR", payload: null });
+  }, []);
 
   return (
     <WalletContext.Provider
@@ -124,6 +119,7 @@ useEffect(() => {
         ...state,
         transferMoney,
         toggleHideBalance,
+        clearError 
       }}
     >
       {children}
